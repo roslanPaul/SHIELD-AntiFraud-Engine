@@ -27,3 +27,25 @@ from config import DATABASE_URI, LOG_LEVEL, LOG_FORMAT
 # Configuration du logging
 logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
+
+class StagingDatabase:
+    """
+    Gestionnaire de connexion à la base de données de staging.
+    
+    Simule l'environnement de production avec :
+    - Connection pooling
+    - Gestion des transactions
+    - Logging des requêtes
+    - Métriques de performance
+    """
+    
+    def __init__(self, database_uri: str = DATABASE_URI):
+        """
+        Initialise la connexion à la base.
+        
+        Args:
+            database_uri: URI de connexion (SQLite ou PostgreSQL)
+        """
+        self.database_uri = database_uri
+        self.engine = None
+        self._connect()
