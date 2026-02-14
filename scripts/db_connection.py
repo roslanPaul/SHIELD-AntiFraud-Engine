@@ -49,3 +49,18 @@ class StagingDatabase:
         self.database_uri = database_uri
         self.engine = None
         self._connect()
+    
+    def _connect(self):
+        """Établit la connexion avec pool de connexions."""
+        try:
+            # En production, on ajouterait :
+            # pool_size=10, max_overflow=20, pool_timeout=30
+            self.engine = create_engine(
+                self.database_uri,
+                echo=False,  # Mettre True pour debug SQL
+                future=True
+            )
+            logger.info(f"✅ Connexion établie à {self.database_uri}")
+        except Exception as e:
+            logger.error(f"❌ Erreur de connexion : {e}")
+            raise
