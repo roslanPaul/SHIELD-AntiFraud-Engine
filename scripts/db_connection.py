@@ -64,3 +64,18 @@ class StagingDatabase:
         except Exception as e:
             logger.error(f"❌ Erreur de connexion : {e}")
             raise
+    
+    @contextmanager
+    def get_connection(self):
+        """
+        Context manager pour connexion sécurisée.
+        
+        Usage:
+            with db.get_connection() as conn:
+                result = conn.execute(query)
+        """
+        conn = self.engine.connect()
+        try:
+            yield conn
+        finally:
+            conn.close()
