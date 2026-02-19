@@ -79,3 +79,31 @@ class StagingDatabase:
             yield conn
         finally:
             conn.close()
+
+    def execute_query(self, query: str, params: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+        """
+        Exécute une requête SQL et retourne un DataFrame.
+        
+        Args:
+            query: Requête SQL (peut contenir des :param)
+            params: Dictionnaire de paramètres (SQL injection safe)
+        
+        Returns:
+            DataFrame avec les résultats
+        """
+        try:
+            logger.info(f"🔍 Exécution requête : {query[:100]}...")
+            
+            with self.get_connection() as conn:
+                if params:
+                    result = pd.read_sql(text(query), conn, params=params)
+                else:
+                    result = pd.read_sql(query, conn)
+            
+            logger.info(f"✅ {len(result)} lignes récupérées")
+            return result
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur SQL : {e}")
+            logger.error(f"   Requête : {query}")
+            raise
